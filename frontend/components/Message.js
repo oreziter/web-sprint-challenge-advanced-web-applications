@@ -20,5 +20,6 @@ export default function Message({ message }) {
 }
 
 Message.propTypes = {
-  message: PT.string.isRequired,
+  message: PT.string.isRequired, 
 }
+

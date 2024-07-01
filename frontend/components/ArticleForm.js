@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import PT from 'prop-types'
+import React, { useEffect, useState } from 'react';
+import PT from 'prop-types';
+import Articles from './Articles';
 
 const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
   // ✨ where are my props? Destructure them here
+  const { setCurrentArticleId, currentArticle, postArticle, updateArticle } = props;
 
   useEffect(() => {
-    // ✨ implement
-    // Every time the `currentArticle` prop changes, we should check it for truthiness:
-    // if it's truthy, we should set its title, text and topic into the corresponding
-    // values of the form. If it's not, we should reset the form back to initial values.
-  })
+   if (currentArticle) setValues(currentArticle);
+   else setValues(initialFormValues);
+  }, [currentArticle])
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -20,16 +20,22 @@ export default function ArticleForm(props) {
   }
 
   const onSubmit = evt => {
-    evt.preventDefault()
-    // ✨ implement
-    // We must submit a new post or update an existing one,
-    // depending on the truthyness of the `currentArticle` prop.
-  }
+    evt.preventDefault(); 
+   if (currentArticle) updateArticle({article_id: currentArticle.article_id, article: values});
+   else {
+    postArticle(values);
+    setValues(initialFormValues)
+   }
+  };
 
   const isDisabled = () => {
-    // ✨ implement
-    // Make sure the inputs have some values
-  }
+    if (values.text.trim(). length > 0 && 
+    values.title.trim().length > 0 && 
+    values.topic.length > 0
+  ) 
+    return false;
+    return true;
+  };
 
   return (
     // ✨ fix the JSX: make the heading display either "Edit" or "Create"
@@ -58,11 +64,12 @@ export default function ArticleForm(props) {
       </select>
       <div className="button-group">
         <button disabled={isDisabled()} id="submitArticle">Submit</button>
-        <button onClick={Function.prototype}>Cancel edit</button>
+        {currentArticle && <button onClick={() => setCurrentArticleId(null)}>Cancel edit</button>}
       </div>
     </form>
   )
 }
+
 
 // 🔥 No touchy: ArticleForm expects the following props exactly:
 ArticleForm.propTypes = {
@@ -76,3 +83,7 @@ ArticleForm.propTypes = {
     topic: PT.string.isRequired,
   })
 }
+
+
+
+
